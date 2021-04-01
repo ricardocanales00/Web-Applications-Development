@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<script type="module">
+
+		var total = 0;
+
+		let btn = document.getElementById("add");
+		btn.className += 'btn';
+
+		let mylist = document.getElementById("mylist");
+
+		let showTotal = document.getElementById("GradTotal");
+
+		add.addEventListener("click",()=>{
+			let newitem = document.createElement("li");
+			let innerspan = document.createElement("label");
+			let innerName = document.createElement("input");
+			var innerPrice = document.createElement("input");
+
+			innerspan.appendChild(document.createTextNode("Add product to your shopping cart"));
+
+			newitem.appendChild(innerspan);
+			newitem.appendChild(innerName);
+			newitem.appendChild(innerPrice);
+
+
+			let btnSave=document.createElement("button");
+			btnSave.className += 'btn';
+
+			let newbtn=document.createElement("button");
+			newbtn.className += 'btn-delete';
+
+			btnSave.addEventListener("click",(event)=>{
+				if (innerName.value=== '' || innerPrice.value=== '') {
+					event.preventDefault();
+					var x = document.getElementById("messages");
+					if (x.style.display === "none") {
+						x.style.display = "block";
+					} 
+				} else {
+					
+					var number = parseInt(innerPrice.value);
+					var grandTotal = total + number;
+					total = total = grandTotal;
+					document.getElementById("GradTotal").innerHTML = "The total is: " + grandTotal;
+
+
+					var x = document.getElementById("messages");
+					if (x.style.display === "block") {
+						x.style.display = "none";
+					} 
+					
+				}
+			})
+			
+
+			newbtn.addEventListener("click",(event)=>{
+				var number = parseInt(innerPrice.value);
+				var grandTotal = total - number;
+				total = total = grandTotal;
+				document.getElementById("GradTotal").innerHTML = "The total is: " + grandTotal;
+
+				let theliitem=event.target.parentNode;
+				mylist.removeChild(theliitem);
+			})
+
+			btnSave.appendChild(document.createTextNode("Save product"));
+			newbtn.appendChild(document.createTextNode("Remove product"));
+
+			newitem.appendChild(btnSave);
+			newitem.appendChild(newbtn);
+
+			mylist.appendChild(newitem);
+		});
+	</script>
+
+	<style type="text/css">
+		html {
+			background: white;
+		}
+
+		h1 {
+		  text-transform: uppercase;
+		  font-weight: bold;
+		  font-size: 2.5em;
+		}
+
+		input {
+		  padding: 0.5em 0.3em; 
+		  font-size: 1.4em;
+		  color: #8a8a8a;
+		  text-align: center;
+		}
+
+		.btn {
+		  padding: 10px 30px;
+		  border-radius: 0.2em;
+		  font-size: 1.4em;
+		  font-weight: bold;
+		  background: #43ace3;
+		  color: #fff;
+		}
+
+		.btn-delete {
+		  padding: 10px 30px;
+		  border-radius: 0.2em;
+		  font-size: 1em;
+		  font-weight: bold;
+		  background: red;
+		  color: #fff;
+		}
+	</style>
+
+</head>
+<body>
+	<button id="add">Add </button>
+	<h1>Your shopping cart</h1>
+	<div id="messages" style="width: 100pt; height: 100pt; background-color: red; display: none">
+		<h3>
+			You need to fill both fields
+		</h3>
+	</div>
+	
+	<ul id = "mylist"></ul>
+	<h3 id="GradTotal"></h3>
+</body>
+</html>
