@@ -1,0 +1,46 @@
+<!-- This file is given to the client in the main route -->
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Square example</title>
+</head>
+<body>
+    <h1>Square</h1>
+    <form>
+        <label for="number">Number:</label>
+        <input type="number" id="txtNumber">
+        <input type="submit" value="Square it!" id="square"> 
+    </form>
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const txtN = document.getElementById('txtNumber');
+        
+        const btnSquare = document.getElementById('square');
+        btnSquare.addEventListener("click", (e) => {
+            e.preventDefault();
+            let nAsString = txtN.value.trim();
+            if (nAsString==='' || isNaN(nAsString)) {
+                alert('Input valid number');
+                return;
+            }
+
+            axios.post(
+                'http://localhost:3000/square', // change to localhost and the server won't complain
+                {
+                    number: nAsString,
+                }
+            )
+            .then(response => {
+                console.log(response);
+                alert(`The square of ${nAsString} is ${response.data}`);
+            })
+            .catch(error => console.log(error));
+        });
+    </script>
+</body>
+</html>
+

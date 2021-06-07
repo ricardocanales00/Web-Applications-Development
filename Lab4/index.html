@@ -31,27 +31,12 @@
 	</div>
 
 	<script>
-		let bre = 0;
 		var theForm = document.querySelector("form");
 		var txtName = document.getElementById("txtName");
 		var elements = document.getElementById("elements");
 		const prefix = "http://localhost:3000/pokemon?txtName="
+
 		var peso = 0;
-
-		const container = document.getElementById('accordion');
-		const showPeso = document.getElementById('divPeso');
-
-		class Pokemon {
-			constructor(id, name, ability, height, weight){
-				this.pokID = id;
-				this.pokName = name;
-				this.pokAbility = ability;
-				this.pokHeight = height;
-				this.pokWeight = weight;
-			}
-		}
-
-		pokemons = [];
 
 		function successfulValidation(input){
 			input = input.trim();
@@ -62,87 +47,58 @@
 			return true;
 		}
 
-		function duplicates(name){
-			return pokemons.findIndex(x => x.pokName===name);
-		}
-
-		function createCard(imgsrc, pokemonName, ability, height, weight){
-			const pesoTotal = ' ' + peso;
-			const content = '<div class="col-md-4"><div class="card" style="width: 18rem;"><img src="' + imgsrc + '" class="card-img-top"><div class="card-body"><h5 class="card-title">' + pokemonName + '</h5><p class="card-text"><label class="text-strong"><strong>Ability:</label></strong><br><span>'+ability+'.</span><br><label class="text-strong"><strong>Height:</strong></label><br><span>'+height+'.</span><br><label class="text-strong"><strong>Weight:</label></strong><br><span>'+weight+'.</span><br></p></div></div></div>';
-			const endr = '</row><row>';
-
-
-			// Append newyly created card element to the container
-			container.innerHTML += content;
-			showPeso.innerHTML = pesoTotal;
-
-			if(bre == 2){
-				container.innerHTML += endr;
-				bre = 0;
-			} else {
-				bre += 1;
-			}
-		}
-
 		theForm.onsubmit = (event) => {
 			let name = txtName.value
 			if (!successfulValidation(name)){
 				alert("A valid name is required");
 				return;
-			}
+			} 
 
-			var dup = duplicates(name);
+			event.preventDefault();
 
-			if(dup != -1){
-				event.preventDefault();
+			let url = prefix + txtName.value;
+			console.log(url);
 
-				let pokemonId =  pokemons[dup].pokID;
+			var ajaxRequest = new XMLHttpRequest();
+
+			ajaxRequest.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var pokemonData = this.responseText;
+				var pokemonObjetc = JSON.parse(pokemonData);
+
+				var pokemonId = pokemonObjetc.id;
 				var imgsrc = "https://pokeres.bastionbot.org/images/pokemon/" + pokemonId + ".png";
-				var pokemonName =  pokemons[dup].pokName;
-				var ability =  pokemons[dup].pokAbility;
-				var height =   pokemons[dup].pokHeight;
-				var weight =  pokemons[dup].pokWeight;
-
-				peso +=  weight;
-
-				createCard(imgsrc, pokemonName, ability, height, weight);
-
-			} else {
-				event.preventDefault();
-				let url = prefix + txtName.value;
-				console.log(url);
-
-				var ajaxRequest = new XMLHttpRequest();
-
-				ajaxRequest.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-
-						var pokemonData = this.responseText;
-						var pokemonObjetc = JSON.parse(pokemonData)
-
-						var pokemonId = pokemonObjetc.id;
-						var imgsrc = "https://pokeres.bastionbot.org/images/pokemon/" + pokemonId + ".png";
-						var pokemonName = pokemonObjetc.name;
-						var ability = pokemonObjetc.abilities[0].ability.name;
-						var height =  pokemonObjetc.height;
-						var weight = pokemonObjetc.weight;
-
-						let pokemon = new Pokemon(pokemonId, pokemonName, ability, height, weight);
-						pokemons.push(pokemon);
-						window.localStorage.setItem('pokemons', JSON.stringify('pokemons'));
-
-						peso += pokemonObjetc.weight;
-
-						createCard(imgsrc, pokemonName, ability, height, weight);
-
-					} else if (this.status == 404){
-						alert("The pokemon was not found");
-					}
+				var pokemonName = pokemonObjetc.name;
+				var ability;
+				if(pokemonObjetc.ability == undefined){
+					ability = pokemonObjetc.abilities[0].ability.name;
+				} else {
+					ability = pokemonObjetc.ability;
 				}
+				var height =  pokemonObjetc.height;
+				var weight = pokemonObjetc.weight;
 
-			ajaxRequest.open("GET", url, true);
-			ajaxRequest.send();
+				peso += pokemonObjetc.weight;
+
+				const container = document.getElementById('accordion');
+				const showPeso = document.getElementById('divPeso');
+
+
+				const pesoTotal = ' ' + peso;
+				const content = '<div class="card" style="width: 18rem;"><img src="' + imgsrc + '" class="card-img-top"><div class="card-body"><h5 class="card-title">' + pokemonName + '</h5><p class="card-text"><label class="text-strong"><strong>Ability:</label></strong><br><span>'+ability+'.</span><br><label class="text-strong"><strong>Height:</strong></label><br><span>'+height+'.</span><br><label class="text-strong"><strong>Weight:</label></strong><br><span>'+weight+'.</span><br></p></div></div>';
+				// Append newyly created card element to the container
+				container.innerHTML += content;
+
+				showPeso.innerHTML = pesoTotal;
+
+			} else if (this.status == 404){
+				alert("The pokemon was not found");
+			}
 		}
+
+		ajaxRequest.open("GET", url, true);
+		ajaxRequest.send();
 	};
 	</script>
 	<!-- Option 1: Bootstrap Bundle with Popper -->
