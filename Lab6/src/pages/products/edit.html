@@ -1,0 +1,121 @@
+<!-- This file is given to the client in the main route -->
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/5.0/examples/navbar-fixed/navbar-top-fixed.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:3000/products/all">my Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="http://127.0.0.1:3000/products/all#">Products</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="bg-light p-5 rounded">
+            <div class="row">
+                <h1>Editing product</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <form>
+                <div class="mb-3">
+                    <label for="txtName" class="form-label">Name:</label>
+                    <input type="text" id="txtName" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txtPrice" class="form-label">Price:</label>
+                    <input type="number" id="txtPrice" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="txtBrand" class="form-label">Brand:</label>
+                    <input type="text" id="txtBrand" class="form-control">
+                </div>
+
+                <input type="submit" class="btn btn-primary" id="submit" value="Update product">
+                
+                </div>
+            </form>
+        </div>
+        
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const productId = '<%= productId %>';
+        const txtName = document.getElementById('txtName');
+        const txtPrice = document.getElementById('txtPrice');
+        const txtBrand = document.getElementById('txtBrand');
+
+        loadProductData();
+        
+        const btnSubmit = document.getElementById('submit');
+        btnSubmit.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            let name = txtName.value.trim();
+            let price = txtPrice.value.trim();
+            let brand = txtBrand.value.trim();
+
+            // Comment to check out how server validation is working too
+            if (name === '') { alert('Specify a name'); return; }
+            if (price ==='' || isNaN(price)) { alert('Input valid price'); return; }
+            if (brand ==='') { alert('Input valid brand'); return; }
+
+            axios.put( 
+                `http://127.0.0.1:3000/products/${productId}`, 
+                {
+                    name: name,
+                    price: price,
+                    brand: brand
+                }
+            )
+            .then(response => {
+                console.log(response);
+                alert(`Product updated successfully`);
+                window.location.replace('http://127.0.0.1:3000/products/all');
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                alert(`Problem when updating product ${error.response.data}`);
+            });
+        });
+
+        function loadProductData(){
+            axios.get(`http://127.0.0.1:3000/load/${productId}`)
+            .then(response => {
+                console.log(response);
+                txtName.value = response.data.name;
+                txtPrice.value = response.data.price;
+                txtBrand.value = response.data.brand;
+            })
+            .catch(error => {
+                console.log(error.response.data);
+                btnSubmit.disabled = true;
+                alert(`Problem when loading data for movie ${error.response.data}`);
+            });
+        }
+    </script>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+</body>
+</html>
+
