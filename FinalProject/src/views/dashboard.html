@@ -1,0 +1,113 @@
+<!-- This file is given to the client in the main route -->
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit usuario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <!-- Custom styles for this template -->
+  <link href="https://getbootstrap.com/docs/5.0/examples/navbar-fixed/navbar-top-fixed.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="http://127.0.0.1:3000/products/all">my Store</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="http://127.0.0.1:3000/catalogo#">Tienda</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="http://127.0.0.1:3000/my-profile">Mi Perfil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="http://127.0.0.1:3000/carrito#">Carrito</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main class="container">
+    <div class="bg-light p-5 rounded">
+      <div class="row">
+        <h1>Buen día, <strong id="name"></strong>!</h1>
+      </div>
+    </div>
+
+    <div class="row col-md-12">
+      <div class="col-md-4" style="padding-top: 40pt">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Ir al catalogo</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Conoce nuestros productos ></h6>
+            <p class="card-text">Lo mejor del mercado al mejor precio</p>
+            <a href="/catalogo" class="card-link">Ir</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" style="padding-top: 40pt">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Mi Perfil</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Actualiza tu información ></h6>
+            <p class="card-text">¡Mantente al día!</p>
+            <a href="/my-profile" class="card-link">Ir</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4" style="padding-top: 40pt">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Mi Carrito</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Termina de comprar ></h6>
+            <p class="card-text">Paga y recibe tus productos pronto!</p>
+            <a href="/catalogo" class="card-link">Ir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" id="personalized" style="padding-top: 50pt">
+      
+    </div>
+  </main>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    const container = document.getElementById('personalized');
+    const content = '<div class="col-md-4" style="padding-top: 40pt"><div class="card" style="width: 18rem;"><div class="card-body"><h5 class="card-title">Usuarios</h5><h6 class="card-subtitle mb-2 text-muted">Gestionar lista de usuarios ></h6><p class="card-text">Conoce a los cleintes registrados</p><a href="/user/all" class="card-link">Ir</a></div></div></div></div>';
+
+    const content2 = '<div class="col-md-4" style="padding-top: 40pt"><div class="card" style="width: 18rem;"><div class="card-body"><h5 class="card-title">Products list</h5><h6 class="card-subtitle mb-2 text-muted">Lista de productos en venta </h6><p class="card-text">Gestiona tus productos</p><a href="/products/all" class="card-link">Ir</a></div></div></div></div>';
+    const userId = '<%= userId %>';
+    loadProductData();
+
+    function loadProductData(){
+            axios.get(`http://127.0.0.1:3000/users/${userId}`)
+            .then(response => {
+                document.getElementById("name").innerHTML = response.data.name;
+
+                console.log(response.data);
+
+                if (response.data.cargo === "admin") {
+                  container.innerHTML += content;
+                  container.innerHTML += content2;
+
+                }
+            })
+            .catch(error => {
+                console.log(error.response.data);
+                btnSubmit.disabled = true;
+                alert(`Problem when loading data ${error.response.data}`);
+            });
+        }
+  </script>
+
+  <script src="https://getbootstrap.com/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
+</body>
+</html>
+
